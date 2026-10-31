@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\build\CMakeFiles\36b2787e0c713f9c39952d78dc75d865\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E72057AE-0790-35A9-B706-6CB6AB1DD89B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
