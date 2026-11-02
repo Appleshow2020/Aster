@@ -1,0 +1,30 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Aster: Build",
+            "command": "cl.exe",
+            "args": [
+                "/Zi",
+                "/nologo",
+                "/I",
+                "${workspaceFolder}\\include",
+                "/Fe:${workspaceFolder}\\build\\aster.exe",
+                "${workspaceFolder}\\src\\cli\\main.c",
+                "${workspaceFolder}\\src\\common\\vector.c"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Build Aster interpreter."
+        }
+    ],
+    "version": "2.0.0"
+}
