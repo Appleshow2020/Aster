@@ -1,0 +1,59 @@
+import unittest
+from unittest import TestSuite, assertEqual, assertTrue, assertFalse, assertRaises
+
+var t = new TestSuite("collections")
+t.add("list", () => {
+    list<int> xs = [3, 1, 2]
+    xs.add(4)
+    xs.sort()
+    assertEqual(xs, [1, 2, 3, 4])
+    assertRaises("TypeError", () => { xs.add("x") })
+    assertEqual(xs[1..3], [2, 3])
+    assertEqual(xs.map(x => x * 2), [2, 4, 6, 8])
+    assertEqual(xs.filter(x => x > 2).length, 2)
+    assertEqual(xs.reduce((a, b) => a + b, 0), 10)
+    assertRaises("IndexError", () => { var v = xs[10] })
+})
+t.add("map", () => {
+    map<string, int> m = { "Alice": 100, "Bob": 90 }
+    assertEqual(m["Bob"], 90)
+    m["Cy"] = 80
+    assertEqual(m.length, 3)
+    assertTrue(m.has("Cy"))
+    assertRaises("KeyError", () => { var v = m["zzz"] })
+    assertRaises("TypeError", () => { m["k"] = "v" })
+})
+t.add("set tuple array", () => {
+    var s = new set<int>([1, 2, 2, 3])
+    assertEqual(s.length, 3)
+    assertTrue(2 in s)
+    var tp = (1, "a")
+    assertEqual(tp[1], "a")
+    array<int> arr = new array<int>(3)
+    arr[0] = 9
+    assertEqual(arr, [9, 0, 0])
+    assertRaises("IndexError", () => { arr[3] = 1 })
+})
+t.add("ranges and in", () => {
+    assertEqual((1..5).toList(), [1, 2, 3, 4])
+    assertTrue(3 in 1..5)
+    assertFalse(5 in 1..5)
+    assertTrue("ell" in "hello")
+    int total = 0
+    for (int i in 0..4) { total += i }
+    assertEqual(total, 6)
+})
+t.add("strings", () => {
+    assertEqual("a,b".split(","), ["a", "b"])
+    assertEqual("Hi".upper(), "HI")
+    assertEqual("ab" * 2, "abab")
+    assertEqual("hello"[1], 'e')
+    assertEqual(", ".join(["x", "y"]), "x, y")
+})
+t.add("pipeline and lambda", () => {
+    fn dbl(int v) -> int { return v * 2 }
+    assertEqual(10 |> dbl, 20)
+    assertEqual(3 |> dbl |> dbl, 12)
+    assertEqual((fn(int x) => x + 1)(1), 2)
+})
+unittest.main(t)

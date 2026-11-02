@@ -1,0 +1,54 @@
+import unittest
+from unittest import TestSuite, assertEqual, assertTrue, assertFalse, assertRaises, assertNull
+
+var t = new TestSuite("types")
+t.add("int range", () => {
+    assertRaises("TypeError", () => { int x = 3000000000 })
+    long big = 3000000000
+    assertEqual(big, 3000000000)
+    assertRaises("TypeError", () => { byte b = 256 })
+})
+t.add("no implicit conversion", () => {
+    assertRaises("TypeError", () => { double d = 10 })
+    assertRaises("TypeError", () => { var z = 1 + 1.5 })
+    assertEqual(cast<double>(10), 10.0)
+})
+t.add("var is static", () => {
+    var n = 16
+    n = 20
+    assertEqual(n, 20)
+    assertRaises("TypeError", () => { var m = 1; m = "hello" })
+})
+t.add("nullable", () => {
+    int? a = null
+    assertNull(a)
+    assertEqual(a ?? 7, 7)
+    assertRaises("TypeError", () => { string s = null })
+    string? nm = null
+    assertNull(nm?.length)
+    nm ??= "Guest"
+    assertEqual(nm, "Guest")
+})
+t.add("cast", () => {
+    assertEqual(cast<int>("42"), 42)
+    assertEqual(cast<int>(3.99), 3)
+    assertEqual(cast<string>(5), "5")
+    assertNull(cast<int?>("abc"))
+    assertRaises("ValueError", () => { int q = cast<int>("abc") })
+    assertEqual(cast<char>(65), 'A')
+})
+t.add("float decimal", () => {
+    assertEqual(10.5m + 1.5m, 12.0m)
+    assertEqual(typeof(1.5f), "float")
+    assertEqual(7 // 2, 3)
+    assertEqual(7 / 2, 3.5)
+    assertEqual(-7 % 3, 2)
+    assertEqual(2 ** 10, 1024)
+})
+t.add("conditions must be bool", () => {
+    assertRaises("TypeError", () => { if (1) { } })
+})
+t.add("const", () => {
+    assertRaises("TypeError", () => { const int K = 1; K = 2 })
+})
+unittest.main(t)

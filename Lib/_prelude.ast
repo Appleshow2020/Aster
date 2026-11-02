@@ -1,0 +1,16 @@
+class Error {
+    public string message = ""
+    constructor(string message = "") { this.message = message }
+    public fn toString() -> string { return this.message }
+}
+class RuntimeError extends Error {}
+class TypeError extends Error {}
+class ValueError extends Error {}
+class NullError extends Error {}
+class IndexError extends Error {}
+class KeyError extends Error {}
+class ZeroDivisionError extends Error {}
+class NameError extends Error {}
+class AccessError extends Error {}
+class ImportError extends Error {}
+class IOError extends Error {}

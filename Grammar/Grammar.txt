@@ -1,0 +1,81 @@
+# Aster 0.4 문법 (EBNF). Parser/parser.py 가 이 문법을 구현한다.
+# 표기: a | b 선택, [a] 선택적, {a} 반복, 'x' 리터럴, NL 줄바꿈 토큰(= 문장 끝, ';' 와 동치)
+
+program        : { statement }
+block          : '{' { statement } '}'
+
+statement      : block | if_stmt | while_stmt | for_stmt | try_stmt
+               | 'break' end | 'continue' end | 'return' [expr] end | 'throw' expr end
+               | namespace | import | from_import | class_decl | func_decl | var_decl | expr end
+end            : ';' | NL | (lookahead '}' or EOF)
+body           : block | statement                     # 한 줄 본문은 중괄호 생략 가능
+
+if_stmt        : 'if' '(' expr ')' body [ 'else' (if_stmt | body) ]
+while_stmt     : 'while' '(' expr ')' body
+for_stmt       : 'for' '(' ( [type] NAME 'in' expr
+                           | (var_decl | expr ';' | ';') [expr] ';' [expr] ) ')' body
+try_stmt       : 'try' block { 'catch' ['(' ([type] NAME | type) ')'] block } [ 'finally' block ]
+
+namespace      : 'namespace' NAME { '.' NAME } block
+import         : 'import' ( STRING | dotted [ 'as' NAME ] ) end
+from_import    : 'from' dotted 'import' name_as { ',' name_as } end
+dotted         : NAME { '.' NAME }
+name_as        : NAME [ 'as' NAME ]
+
+modifiers      : { 'public' | 'protected' | 'private' | 'internal' | 'file' | 'static' | 'const' }
+var_decl       : modifiers type NAME [ '=' expr ] end   # type 이 var 이면 타입 추론, const 는 초기값 필수
+func_decl      : modifiers 'fn' (NAME | 'operator' OP) [tparams] '(' [params] ')' [ '->' type ] ( block | '=>' expr end | end )
+params         : param { ',' param }
+param          : type NAME [ '=' expr ]
+tparams        : '<' tparam { ',' tparam } '>'
+tparam         : NAME [ ':' type ]
+
+class_decl     : modifiers ('class' | 'interface') NAME [tparams]
+                 [ 'extends' type { ',' type } ] [ 'implements' type { ',' type } ] '{' { member } '}'
+member         : modifiers ( field | func_decl | property | constructor | destructor )
+field          : type NAME [ '=' expr ] end
+property       : 'property' type NAME '{' { accessor } '}' [ '=' expr ] end
+accessor       : modifiers ('get' | 'set') ( block | [ '=>' expr (get 만) ] ) [';']
+constructor    : 'constructor' '(' [params] ')' [ ':' init { ',' init } ] block
+init           : 'super' [ '<' type '>' ] '(' [args] ')'
+destructor     : 'destructor' '(' ')' block
+
+type           : NAME { ('.' | '::') NAME } [ '<' type { ',' type } '>' ] [ '?' ]
+               | 'fn' '(' [ type { ',' type } ] ')' '->' type [ '?' ]
+
+# ── 식 (낮은 우선순위 → 높은 우선순위) ──
+expr           : assign
+assign         : pipe [ ('=' | '+=' | '-=' | '*=' | '/=' | '//=' | '%=' | '**=' | '??=') assign ]   # 좌변은 이름/멤버/인덱스
+pipe           : coalesce { '|>' coalesce }
+coalesce       : or [ '??' coalesce ]
+or             : and { ('||' | 'or') and }
+and            : not { ('&&' | 'and') not }
+not            : ('!' | 'not') not | comparison
+comparison     : range { ( '==' | '!=' | '<' | '>' | '<=' | '>=' ) range
+                       | 'is' ['not'] (type | 'null') | ['not'] 'in' range }
+range          : additive [ '..' additive ]                       # [a, b) 반개구간
+additive       : term { ('+' | '-') term }
+term           : unary { ('*' | '/' | '//' | '%') unary }
+unary          : ('-' | '+') unary | power
+power          : postfix [ '**' unary ]                           # 우결합, 단항 마이너스보다 강함
+postfix        : primary { '(' [args] ')' | ('.' | '::' | '?.') NAME | '[' expr ']' | '<' type {',' type} '>' '(' [args] ')' }
+primary        : NUMBER | STRING | CHAR | 'true' | 'false' | 'null' | NAME | 'this'
+               | 'super' ['<' type '>'] ('.' | '::') NAME
+               | 'new' type '(' [args] ')' | 'cast' '<' type '>' '(' expr ')'
+               | '(' expr ')' | '(' [expr {',' expr}] [','] ')'    # 튜플
+               | '[' [expr {',' expr}] ']'                        # list
+               | '{' [ expr ':' expr {',' expr ':' expr} ] '}'    # map  ({} 는 빈 map)
+               | '{' expr {',' expr} '}'                          # set
+               | lambda
+lambda         : NAME '=>' lam_body | '(' [lparams] ')' '=>' lam_body | 'fn' '(' [lparams] ')' [ '->' type ] ( block | '=>' lam_body )
+lam_body       : block | assign
+lparams        : (NAME | param) { ',' (NAME | param) }
+args           : expr { ',' expr }
+
+# ── 어휘 ──
+NUMBER         : DIGITS | '0x' HEX | DIGITS '.' DIGITS [exp] ['f' | 'm'] | DIGITS ['m' | 'f']    # 1  1.5  1.5f  10.5m  0xFF  1_000
+STRING         : '"' ... '"'  (\n \t \r \0 \\ \" \' \uXXXX)
+CHAR           : "'" 문자 한 개 "'"
+COMMENT        : '#' ... EOL  |  '/*' ... '*/'
+줄 잇기        : 줄이 이항 연산자·',' ·'.'·'(' 로 끝나거나, 다음 줄이 '|>' '.' '?.' '&&' '||' '??' 'and' 'or' 로 시작하면 문장이 이어진다.
+                 () [] 안에서는 줄바꿈이 무시된다.

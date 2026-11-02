@@ -1,0 +1,63 @@
+import unittest
+from unittest import TestSuite, assertEqual, assertTrue, assertRaises, assertNull
+from collections import Stack, Queue, Counter
+import math
+
+class Shape { public fn area() -> double { return 0.0 } }
+class Sq extends Shape {
+    private double s
+    constructor(double s) { this.s = s }
+    public fn area() -> double { return this.s * this.s }
+}
+class MyError extends Error {}
+fn biggest<T: Shape>(T a, T b) -> T { if (a.area() > b.area()) { return a } return b }
+fn identity<T>(T v) -> T { return v }
+fn auto(int x) { return x * 2 }
+fn mixed(int x) { if (x > 0) { return 1 } return "no" }
+
+var t = new TestSuite("generics+errors")
+t.add("generic fn", () => {
+    assertEqual(identity<int>(42), 42)
+    assertEqual(identity("s"), "s")
+    assertTrue(biggest(new Sq(2.0), new Sq(3.0)).area() == 9.0)
+    assertRaises("TypeError", () => { var r = biggest(1, 2) })
+})
+t.add("generic classes", () => {
+    var s = new Stack<int>()
+    s.push(1)
+    assertRaises("TypeError", () => { s.push("x") })
+    assertEqual(s.pop(), 1)
+    assertRaises("IndexError", () => { s.pop() })
+    var c = new Counter<string>()
+    c.add("a"); c.add("a")
+    assertEqual(c.count("a"), 2)
+})
+t.add("return inference", () => {
+    assertEqual(auto(4), 8)
+    assertEqual(mixed(1), 1)
+    assertRaises("TypeError", () => { mixed(-1) })
+})
+t.add("exceptions", () => {
+    string log = ""
+    try { throw "boom" } catch (e) { log += "c:" + e.message } finally { log += ";f" }
+    assertEqual(log, "c:boom;f")
+    try { throw new MyError("mine") } catch (ValueError e) { log = "wrong" } catch (MyError e) { log = "right" }
+    assertEqual(log, "right")
+    assertRaises("ZeroDivisionError", () => { var z = 1 / 0 })
+    assertRaises("NameError", () => { var z = nosuch })
+    assertRaises("TypeError", () => { throw 5 })
+})
+t.add("finally runs on return", () => {
+    fn f() -> int { try { return 1 } finally { } }
+    assertEqual(f(), 1)
+})
+t.add("native modules", () => {
+    assertEqual(math.sqrt(9), 3.0)
+    assertRaises("ValueError", () => { var r = math.sqrt(-1) })
+    assertRaises("ImportError", () => { import nosuchmodule })
+})
+t.add("recursion limit", () => {
+    fn r(int n) -> int { return r(n + 1) }
+    assertRaises("RuntimeError", () => { r(0) })
+})
+unittest.main(t)

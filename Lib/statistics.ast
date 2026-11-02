@@ -1,0 +1,27 @@
+# Lib/statistics.ast — 기초 통계 (list<double> 대상)
+import math
+
+fn mean(list<double> xs) -> double {
+    if (xs.length == 0) { throw new ValueError("mean: 빈 목록입니다") }
+    double total = 0.0
+    for (x in xs) { total += x }
+    return total / cast<double>(xs.length)
+}
+
+fn median(list<double> xs) -> double {
+    if (xs.length == 0) { throw new ValueError("median: 빈 목록입니다") }
+    var s = xs.copy()
+    s.sort()
+    int n = s.length
+    if (n % 2 == 1) { return s[n // 2] }
+    return (s[n // 2 - 1] + s[n // 2]) / 2.0
+}
+
+fn variance(list<double> xs) -> double {
+    double m = mean(xs)
+    double acc = 0.0
+    for (x in xs) { acc += (x - m) ** 2.0 }
+    return acc / cast<double>(xs.length)
+}
+
+fn stdev(list<double> xs) -> double { return math.sqrt(variance(xs)) }

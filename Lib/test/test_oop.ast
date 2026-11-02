@@ -1,0 +1,77 @@
+import unittest
+from unittest import TestSuite, assertEqual, assertTrue, assertFalse, assertRaises
+
+interface Flyable { fn fly() -> string }
+class A { public fn who() -> string { return "A" } }
+class B extends A { public fn who() -> string { return "B>" + super.who() } }
+class C extends A { public fn who() -> string { return "C>" + super.who() } }
+class D extends B, C {
+    public fn who() -> string { return "D>" + super.who() }
+    public fn viaC() -> string { return super<C>.who() }
+}
+class Bird implements Flyable { public fn fly() -> string { return "flap" } }
+class Vec {
+    public int x
+    public int y
+    constructor(int x, int y) { this.x = x; this.y = y }
+    public fn operator+(Vec o) -> Vec { return new Vec(this.x + o.x, this.y + o.y) }
+    public fn operator==(Vec o) -> bool { return this.x == o.x and this.y == o.y }
+    public fn operator-() -> Vec { return new Vec(-this.x, -this.y) }
+    public fn toString() -> string { return "Vec(" + str(this.x) + "," + str(this.y) + ")" }
+}
+class Account {
+    private int balance = 0
+    public property int Balance { get => this.balance }
+    public property string Owner { get; private set; } = "anon"
+    public static int created = 0
+    constructor() { Account.created += 1 }
+    public fn deposit(int n) -> void {
+        if (n <= 0) { throw new ValueError("양수여야 합니다") }
+        this.balance += n
+    }
+}
+class Base { public string tag
+  constructor(string t) { this.tag = t } }
+class Mid extends Base { constructor(string t) : super(t + "!") {} }
+
+var t = new TestSuite("oop")
+t.add("mro", () => {
+    assertEqual(new D().who(), "D>B>C>A")
+    assertEqual(new D().viaC(), "C>A")
+})
+t.add("interface", () => {
+    Flyable f = new Bird()
+    assertEqual(f.fly(), "flap")
+    assertTrue(f is Bird)
+    assertTrue(f is Flyable)
+    assertFalse(f is not Flyable)
+})
+t.add("operator overloading", () => {
+    assertEqual(str(new Vec(1, 2) + new Vec(3, 4)), "Vec(4,6)")
+    assertTrue(new Vec(1, 1) == new Vec(1, 1))
+    assertEqual(str(-new Vec(1, 2)), "Vec(-1,-2)")
+})
+t.add("access control", () => {
+    var acc = new Account()
+    acc.deposit(5)
+    assertEqual(acc.Balance, 5)
+    assertEqual(acc.Owner, "anon")
+    assertRaises("AccessError", () => { acc.Owner = "x" })
+    assertRaises("AccessError", () => { var b = acc.balance })
+    assertRaises("AccessError", () => { acc.Balance = 1 })
+    assertRaises("ValueError", () => { acc.deposit(-1) })
+    assertEqual(Account.created, 1)
+})
+t.add("constructors", () => {
+    assertEqual(new Mid("x").tag, "x!")
+})
+t.add("type safety on fields", () => {
+    var v = new Vec(1, 2)
+    assertRaises("TypeError", () => { v.x = "no" })
+    assertRaises("NameError", () => { v.zzz = 1 })
+    assertRaises("TypeError", () => { var q = new Flyable() })
+})
+t.add("missing interface method", () => {
+    assertRaises("TypeError", () => { class Bad implements Flyable { } })
+})
+unittest.main(t)

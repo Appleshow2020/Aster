@@ -1,0 +1,59 @@
+# Lib/unittest.ast — 아주 작은 단위 테스트 프레임워크
+
+class TestSuite {
+    private string name
+    private list<string> labels = new list<string>()
+    private list<fn() -> void> bodies = new list<fn() -> void>()
+    public int passed = 0
+    public int failed = 0
+
+    constructor(string name) { this.name = name }
+
+    public fn add(string label, fn() -> void body) -> void {
+        this.labels.add(label)
+        this.bodies.add(body)
+    }
+
+    public fn run() -> bool {
+        print("== " + this.name + " ==")
+        for (int i in 0..this.bodies.length) {
+            try {
+                this.bodies[i]()
+                this.passed += 1
+                print("  ok    " + this.labels[i])
+            } catch (Error e) {
+                this.failed += 1
+                print("  FAIL  " + this.labels[i] + " -> " + typeof(e) + ": " + e.message)
+            }
+        }
+        print("   " + str(this.passed) + " passed, " + str(this.failed) + " failed")
+        return this.failed == 0
+    }
+}
+
+fn fail(string msg) -> void { throw new RuntimeError(msg) }
+
+fn assertEqual(object a, object b) -> void {
+    if (not (a == b)) { fail("기대: " + str(b) + ", 실제: " + str(a)) }
+}
+
+fn assertNotEqual(object a, object b) -> void {
+    if (a == b) { fail("서로 달라야 합니다: " + str(a)) }
+}
+
+fn assertTrue(bool cond) -> void { if (not cond) { fail("true 가 아닙니다") } }
+fn assertFalse(bool cond) -> void { if (cond) { fail("false 가 아닙니다") } }
+fn assertNull(object? v) -> void { if (v != null) { fail("null 이 아닙니다: " + str(v)) } }
+
+fn assertRaises(string kind, fn() -> void body) -> void {
+    try { body() }
+    catch (Error e) {
+        if (typeof(e) != kind) { fail(kind + " 를 기대했지만 " + typeof(e) + " 발생") }
+        return
+    }
+    fail(kind + " 가 발생하지 않았습니다")
+}
+
+fn main(TestSuite suite) -> void {
+    if (not suite.run()) { exit(1) }
+}

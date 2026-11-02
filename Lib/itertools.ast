@@ -1,0 +1,29 @@
+# Lib/itertools.ast — 반복·시퀀스 도우미
+
+fn enumerate<T>(list<T> xs) -> list<tuple<int, T>> {
+    var out = new list<tuple<int, T>>()
+    for (int i in 0..xs.length) { out.add((i, xs[i])) }
+    return out
+}
+
+fn zip<A, B>(list<A> a, list<B> b) -> list<tuple<A, B>> {
+    var out = new list<tuple<A, B>>()
+    int n = min(a.length, b.length)
+    for (int i in 0..n) { out.add((a[i], b[i])) }
+    return out
+}
+
+fn take<T>(list<T> xs, int n) -> list<T> { return xs[0..min(n, xs.length)] }
+fn drop<T>(list<T> xs, int n) -> list<T> { return xs[min(n, xs.length)..xs.length] }
+
+fn count_if<T>(list<T> xs, fn(T) -> bool pred) -> int {
+    int c = 0
+    for (x in xs) { if (pred(x)) { c += 1 } }
+    return c
+}
+
+fn flatten<T>(list<list<T>> xss) -> list<T> {
+    var out = new list<T>()
+    for (xs in xss) { for (x in xs) { out.add(x) } }
+    return out
+}

@@ -1,0 +1,34 @@
+# Lib/text.ast — 문자열 도우미
+
+fn pad_left(string s, int width, char fill = ' ') -> string {
+    string out = s
+    while (out.length < width) { out = fill + out }
+    return out
+}
+
+fn pad_right(string s, int width, char fill = ' ') -> string {
+    string out = s
+    while (out.length < width) { out = out + fill }
+    return out
+}
+
+fn center(string s, int width) -> string {
+    int total = width - s.length
+    if (total <= 0) { return s }
+    int left = total // 2
+    return " " * left + s + " " * (total - left)
+}
+
+fn is_digits(string s) -> bool {
+    if (s.length == 0) { return false }
+    for (c in s) { if (not (c >= '0' and c <= '9')) { return false } }
+    return true
+}
+
+fn reverse(string s) -> string {
+    string out = ""
+    for (int i in 0..s.length) { out = s[i] + out }
+    return out
+}
+
+fn is_palindrome(string s) -> bool { return s == reverse(s) }

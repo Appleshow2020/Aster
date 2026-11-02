@@ -1,0 +1,49 @@
+# Lib/collections.ast — 제네릭 컬렉션 (Aster 로 작성한 표준 라이브러리)
+
+class Stack<T> {
+    private list<T> items = new list<T>()
+
+    public fn push(T x) -> void { this.items.add(x) }
+
+    public fn pop() -> T {
+        if (this.items.length == 0) { throw new IndexError("빈 Stack 에서 pop 할 수 없습니다") }
+        return this.items.pop()
+    }
+
+    public fn peek() -> T {
+        if (this.items.length == 0) { throw new IndexError("빈 Stack 입니다") }
+        return this.items[this.items.length - 1]
+    }
+
+    public fn isEmpty() -> bool { return this.items.length == 0 }
+    public property int Size { get => this.items.length }
+}
+
+class Queue<T> {
+    private list<T> items = new list<T>()
+
+    public fn enqueue(T x) -> void { this.items.add(x) }
+
+    public fn dequeue() -> T {
+        if (this.items.length == 0) { throw new IndexError("빈 Queue 에서 dequeue 할 수 없습니다") }
+        return this.items.removeAt(0)
+    }
+
+    public fn isEmpty() -> bool { return this.items.length == 0 }
+    public property int Size { get => this.items.length }
+}
+
+class Counter<K> {
+    private map<K, int> counts = new map<K, int>()
+
+    public fn add(K key) -> void { this.counts[key] = this.counts.get(key, 0) + 1 }
+    public fn count(K key) -> int { return this.counts.get(key, 0) }
+    public fn keys() -> list<K> { return this.counts.keys() }
+    public property int Total {
+        get {
+            int sum = 0
+            for (k in this.counts) { sum += this.counts[k] }
+            return sum
+        }
+    }
+}

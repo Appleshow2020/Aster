@@ -1,0 +1,56 @@
+interface Movable {
+    fn move(int x, int y) -> void
+}
+
+class Entity {
+    protected int x = 0
+    protected int y = 0
+    public fn getPosition() { return (this.x, this.y) }
+}
+
+class Player extends Entity implements Movable {
+    private string name
+    private int health = 100
+    public property int Score { get; private set; } = 0
+
+    constructor(string name) { this.name = name }
+
+    public fn move(int x, int y) -> void { this.x += x; this.y += y }
+
+    public fn takeDamage(int amount) -> void {
+        this.health -= amount
+        if (this.health <= 0) { print("Player defeated") }
+    }
+    public fn addScore(int n) -> void { this.Score += n }
+    public fn toString() -> string { return this.name + "(" + str(this.health) + ")" }
+}
+
+fn identity<T>(T value) -> T { return value }
+fn doubleValue(int v) -> int { return v * 2 }
+
+fn main() -> void {
+    Player player = new Player("Aster")
+    player.move(10, 5)
+    player.takeDamage(20)
+    player.addScore(7)
+    print(player, player.getPosition(), player.Score)
+
+    int? optionalValue = null
+    int result = optionalValue ?? 0
+    print("result:", result, identity<int>(42), 10 |> doubleValue)
+
+    list<int> nums = [1, 2, 3, 4, 5]
+    print(nums.map(x => x * x).filter(x => x > 4), (1..5).toList())
+    map<string, int> scores = { "Alice": 100, "Bob": 90 }
+    for (name in scores) { print(name, scores[name]) }
+
+    try { throw "Something went wrong" }
+    catch (error) { print("caught:", error) }
+    finally { print("Finished") }
+
+    try { int bad = cast<int>("abc") }
+    catch (ValueError e) { print("ValueError:", e) }
+    print(cast<int?>("abc"), 7 // 2, 7 / 2, 2 ** 10, 10.5m + 1.5m)
+}
+
+main()

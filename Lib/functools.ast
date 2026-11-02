@@ -1,0 +1,17 @@
+# Lib/functools.ast — 함수형 도우미
+
+fn identity<T>(T x) -> T { return x }
+
+fn compose(fn(object) -> object f, fn(object) -> object g) -> fn(object) -> object {
+    return x => g(f(x))
+}
+
+fn partial(fn(object, object) -> object f, object a) -> fn(object) -> object {
+    return b => f(a, b)
+}
+
+fn apply_n(fn(object) -> object f, object x, int n) -> object {
+    object v = x
+    for (int i in 0..n) { v = f(v) }
+    return v
+}
