@@ -78,7 +78,16 @@ char lexer_advance(Lexer *lexer) {
     if (current == '\n') {
         lexer->line++;
         lexer->column = 1;
-    } else { lexer->column++; }
+    } else if (current == '\r') {
+        // Handle Windows-style line endings (\r\n)
+        if (lexer->position < lexer->length && lexer->source[lexer->position] == '\n') {
+            lexer->position++; // Skip the '\n' after '\r'
+        }
+        lexer->line++;
+        lexer->column = 1;
+    } else {
+        lexer->column++;
+    } 
     return current;
 }
 
@@ -134,5 +143,9 @@ Token lexer_next_token(Lexer *lexer)
         return lexer_scan_identifier(lexer);
     }
 
+    if (c == '"') {
+       return lexer_scan_string(lexer);
+    }
+    
     return lexer_scan_operator(lexer);
 }

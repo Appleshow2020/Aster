@@ -4,7 +4,7 @@
 
 #include <stddef.h>
 
-typedef enum {
+typedef enum TokenType {
     // Special
     TOKEN_EOF,
     TOKEN_ERROR,
@@ -23,6 +23,8 @@ typedef enum {
     // Literals
     TOKEN_IDENTIFIER,
     TOKEN_INTEGER,
+    TOKEN_FLOAT_LITERAL,
+    TOKEN_STRING,
 
     // Operators
     TOKEN_EQUAL,           // =
@@ -53,7 +55,7 @@ typedef enum {
     TOKEN_COLON            // :
 } TokenType;
 
-typedef struct {
+typedef struct Token {
     TokenType type;
 
     size_t start;

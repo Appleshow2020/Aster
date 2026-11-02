@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include "aster/token.h"
 
-typedef struct {
+typedef struct Lexer {
     const char *source;
     size_t length;
     size_t position;

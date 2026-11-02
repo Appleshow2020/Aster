@@ -13,5 +13,7 @@ Token lexer_scan_number(Lexer *lexer);
 Token lexer_scan_identifier(Lexer *lexer);
 Token lexer_scan_operator(Lexer *lexer);
 Token lexer_scan_delimiter(Lexer *lexer);
+int lexer_scan_escape(Lexer *lexer);
+Token lexer_scan_string(Lexer *lexer);
 
 #endif
