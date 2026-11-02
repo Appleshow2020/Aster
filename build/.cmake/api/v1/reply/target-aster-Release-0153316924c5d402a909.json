@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Debug/aster.exe"
+			"path" : "Release/aster.exe"
 		},
 		{
-			"path" : "Debug/aster.pdb"
+			"path" : "Release/aster.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -43,7 +43,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /Zi /Ob0 /Od /RTC1 -std:c17 -MDd"
+					"fragment" : "/DWIN32 /D_WINDOWS /O2 /Ob2 /DNDEBUG -std:c17 -MD"
 				}
 			],
 			"language" : "C",
@@ -57,8 +57,7 @@
 			},
 			"sourceIndexes" : 
 			[
-				0,
-				1
+				0
 			]
 		}
 	],
@@ -74,11 +73,11 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /Zi /Ob0 /Od /RTC1 -MDd",
+				"fragment" : "/DWIN32 /D_WINDOWS /O2 /Ob2 /DNDEBUG -MD",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "/machine:x64 /debug /INCREMENTAL",
+				"fragment" : "/machine:x64 /INCREMENTAL:NO",
 				"role" : "flags"
 			},
 			{
@@ -105,15 +104,7 @@
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				0,
-				1
-			]
-		},
-		{
-			"name" : "Header Files",
-			"sourceIndexes" : 
-			[
-				2
+				0
 			]
 		}
 	],
@@ -128,25 +119,6 @@
 			"compileGroupIndex" : 0,
 			"path" : "src/cli/main.c",
 			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"backtraces" : 
-			[
-				1
-			],
-			"compileGroupIndex" : 0,
-			"path" : "src/common/vector.c",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"backtraces" : 
-			[
-				1
-			],
-			"path" : "include/aster/vector.h",
-			"sourceGroupIndex" : 1
 		}
 	],
 	"type" : "EXECUTABLE"

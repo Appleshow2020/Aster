@@ -361,8 +361,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\src\cli\main.c" />
-    <ClCompile Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\src\common\vector.c" />
-    <ClInclude Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\include\aster\vector.h" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

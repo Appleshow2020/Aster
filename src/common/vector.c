@@ -1,22 +1,11 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include "include/aster/vector.h"
 
-typedef struct {
-    int *items;
-    size_t length;
-    size_t capacity;
-} Vector;
-
-void vector_init(Vector *vector) {
-    int *items = malloc(sizeof(int) * 4);
-
-    if (items == NULL) {
-        return;
-    }
-
-    vector->items = items;
-    vector->length = 0;
+void vector_init(Vector *vector)
+{
     vector->capacity = 4;
+    vector->length = 0;
+    vector->items = malloc(sizeof(int) * vector->capacity);
 }
 
 int vector_push(Vector *vector, int value)
@@ -43,23 +32,11 @@ int vector_push(Vector *vector, int value)
     return 1;
 }
 
-int main(void) {
-    Vector vector;
+void vector_free(Vector *vector)
+{
+    free(vector->items);
 
-    vector_init(&vector);
-
-    for (int i=1; i<7; i++) {
-        if (vector_push(&vector, i*10)) {
-            printf("success");
-        }
-    }
-    printf("%zu, %zu", vector.length, vector.capacity);
-
-    for (int i=0; i<vector.length; i++) {
-        printf("%d", vector.items[i]);
-    }
-
-    free(vector.items);
-
-    return 0;
+    vector->items = NULL;
+    vector->length = 0;
+    vector->capacity = 0;
 }

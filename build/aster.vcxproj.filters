@@ -4,22 +4,11 @@
     <ClCompile Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\src\cli\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\src\common\vector.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\include\aster\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\zzuns\Desktop\Aster_starter\Aster\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{7311BC37-0F52-3794-8C12-DCDD0EE2F211}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{0CB96797-8EC6-3B6F-9FE5-9CCF404377C5}</UniqueIdentifier>
     </Filter>

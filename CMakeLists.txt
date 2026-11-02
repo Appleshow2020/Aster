@@ -7,6 +7,4 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(aster
     src/cli/main.c
-    src/common/vector.c
-    include/aster/vector.h
 )
